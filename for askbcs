@@ -1,0 +1,85 @@
+Sub alphatesting()
+
+    Dim ws As Worksheet
+    
+    For Each ws In ActiveWorkbook.Worksheets
+       
+                
+'name variables
+    Dim ticker As String
+    Dim open_years_beginning As Double
+    Dim close_years_end As Double
+    Dim yearly_change As Double
+    Dim volume As Long
+    Dim years_percentage_change As Double
+    Dim summary_table_row As Integer
+    Dim lastrow As Long
+   
+   
+      
+        
+    'header
+        ws.Cells(1, 9).Value = "Ticker"
+        ws.Cells(1, 10).Value = "Yearly Change"
+        ws.Cells(1, 11).Value = "Percentage Change"
+        ws.Cells(1, 12).Value = "Total Stock Volume"
+    
+        lastrow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    
+        summary_table_row = 2
+   
+    
+        For i = 2 To lastrow
+        'Values for the summary
+        If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+        
+        
+        ticker = ws.Cells(i, 1).Value
+       
+        open_years_beginning = ws.Cells(i, 3).Value
+        close_years_end = ws.Cells(i, 6).Value
+        
+        yearly_change = close_years_end - open_years_beginning
+        Else
+        volume = volume + ws.Cells(i, 7).Value
+        
+        If open_years_beginning <> 0 Then
+            
+        years_percentage_change = (yearly_change / open_years_beginning)
+        
+        summary_table_row = summary_table_row + 1
+      
+        
+       
+        Else
+        years_percentage_change = 0
+        
+        End If
+        
+         
+        
+        
+        ws.Cells(summary_table_row, 9).Value = ticker
+        ws.Cells(summary_table_row, 10).Value = yearly_change
+        ws.Cells(summary_table_row, 11).Value = years_percentage_change
+        
+              
+        ws.Cells(summary_table_row, 11).NumberFormat = "0.00%"
+        ws.Cells(summary_table_row, 12).Value = volume
+        volume = 0
+        
+            If years_percentage_change > 0 Then
+            ws.Cells(summary_table_row, 10).Interior.ColorIndex = 4
+        
+            ElseIf years_percentage_change < 0 Then
+            ws.Cells(summary_table_row, 10).Interior.ColorIndex = 3
+            End If
+            
+        
+          
+       
+        
+        Next i
+       
+        Next ws
+    End Sub
